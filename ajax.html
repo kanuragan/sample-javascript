@@ -21,12 +21,32 @@
 
             ajax.onload = function() {
                 const response = JSON.parse(ajax.responseText);
-                console.log(response);
+                clearPost();
+                displayPosts(response);
             }
             const url  = getPostsUrl(keyword);
             ajax.open('GET',url);
             ajax.send();
             
+        }
+
+        function clearPost() {
+            const postFE = document.getElementById("posts");
+            postFE.textContent = "";
+        }
+
+
+        function displayPosts(data) {
+            console.log(data);
+            data.forEach(body => displayPost(body));
+        }
+
+        function displayPost(data) {
+            const postLi = document.createElement("li");
+            postLi.textContent = data.body;
+
+            const postUI = document.getElementById("posts");
+            postUI.appendChild(postLi);
         }
 
         function buttonClick() {
@@ -37,7 +57,6 @@
 <body>
 <input type="text" id="keyword">
 <button onclick="buttonClick()">Search Post</button>
-<ul id="post"></ul>
-<div id="table-posts"></div>
+<ul id="posts"></ul>
 </body>
 </html>

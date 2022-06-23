@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Async Await</title>
+    <script>
+        function getPostsUrl(keyword) {
+            let url = "";
+            if(keyword == "") {
+                url = `https://jsonplaceholder.typicode.com/posts`;
+            } else {
+                url = `https://jsonplaceholder.typicode.com/comments?postId=${keyword}`;
+            }
+            return url;
+        }
+
+        function getPosts(keyword) {
+
+            const promise = new Promise(function(resolve, reject){
+                //ajax
+                const ajax = new XMLHttpRequest();
+                ajax.onload = function() {
+                    const response = JSON.parse(ajax.responseText);
+                    if(response.length != 0) {
+                        resolve(response);
+                    } else {
+                        reject();
+                        console.log('ini 2');
+                    }
+                }
+                const url  = getPostsUrl(keyword);
+                ajax.open('GET',url);
+                ajax.send();
+            });
+
+            return promise;
+        }
+
+        function clearPost() {
+            const postFE = document.getElementById("posts");
+            postFE.textContent = "";
+        }
+
+
+        function displayPosts(data) {
+            data.forEach(body => displayPost(body));
+        }
+
+        function displayPost(data) {
+            const postLi = document.createElement("li");
+            postLi.textContent = data.body;
+
+            const postUI = document.getElementById("posts");
+            postUI.appendChild(postLi);
+        }
+
+        async function buttonClick() {
+            const promise = await getPosts(document.getElementById("keyword").value);
+            clearPost();
+            displayPosts(promise);
+        }
+    </script>
+</head>
+<body>
+<input type="text" id="keyword">
+<button onclick="buttonClick()">Search Post</button>
+<ul id="posts"></ul>
+</body>
+</html>

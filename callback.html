@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AJAX</title>
+    <script>
+        function getPostsUrl(keyword) {
+            let url = "";
+            if(keyword == "") {
+                url = `https://jsonplaceholder.typicode.com/posts`;
+            } else {
+                url = `https://jsonplaceholder.typicode.com/comments?postId=${keyword}`;
+            }
+            return url;
+        }
+
+        function getPosts(keyword, callbacksuccess, callbackerror) {
+            //ajax
+            const ajax = new XMLHttpRequest();
+            ajax.onload = function() {
+                const response = JSON.parse(ajax.responseText);
+                if(response != undefined) {
+                  callbacksuccess(response);
+                } else {
+                  callbackerror();
+                }
+            }
+            const url  = getPostsUrl(keyword);
+            ajax.open('GET',url);
+            ajax.send();
+
+        }
+
+        function clearPost() {
+            const postFE = document.getElementById("posts");
+            postFE.textContent = "";
+        }
+
+
+        function displayPosts(data) {
+            console.log(data);
+            data.forEach(body => displayPost(body));
+        }
+
+        function displayPost(data) {
+            const postLi = document.createElement("li");
+            postLi.textContent = data.body;
+
+            const postUI = document.getElementById("posts");
+            postUI.appendChild(postLi);
+        }
+
+        function buttonClick() {
+
+            getPosts(document.getElementById("keyword").value, function(data){
+                console.log(data);
+            }, function(){
+                console.log('error');
+            });
+        }
+    </script>
+</head>
+<body>
+<input type="text" id="keyword">
+<button onclick="buttonClick()">Search Post</button>
+<ul id="posts"></ul>
+</body>
+</html>
